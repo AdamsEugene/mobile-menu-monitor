@@ -42,6 +42,21 @@ export default class Specifics {
     }
   }
 
+  public handleKnockaroundMenu(element: HTMLElement): void {
+    if (element.classList.contains("header-links")) {
+      const followMenuContent = this.getMenuContent(
+        element,
+        ".header-links-wrapper"
+      );
+      if (followMenuContent) {
+        this.setStyle(followMenuContent, {
+          transform: "translate(0)",
+          "pointer-events": "all",
+        });
+      }
+    }
+  }
+
   public handleRingsMenuClear(element: HTMLElement): void {
     if (element.classList.contains("popout")) {
       const followMenuContent = this.getMenuContent(element, ".popout-list");
@@ -51,6 +66,18 @@ export default class Specifics {
           "visibility",
           "pointer-events",
         ]);
+      }
+    }
+  }
+
+  public handleKnockaroundMenuClear(element: HTMLElement): void {
+    if (element.classList.contains("header-links")) {
+      const followMenuContent = this.getMenuContent(
+        element,
+        ".header-links-wrapper"
+      );
+      if (followMenuContent) {
+        this.removeStyle(followMenuContent, ["transform", "pointer-events"]);
       }
     }
   }

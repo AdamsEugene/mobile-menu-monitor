@@ -25,7 +25,7 @@ class HoverCapture {
 
   private classesToHide = [".overlay.is-visible"];
 
-  private selectorClasses = ".popout--sort";
+  private selectorClasses = ".popout--sort, .header-main-bar";
   private selectorIds = "menu-drawer";
 
   init(containerId: string = "recordingPlayer1"): void {
@@ -52,6 +52,8 @@ class HoverCapture {
     }
 
     this.headerElement = navById || navByClass;
+    console.log(this.headerElement);
+
     if (this.headerElement) {
       this.attachReopenMenuListener();
       if (!this.isProdMode) console.log("container: ", this.headerElement);
@@ -131,8 +133,8 @@ class HoverCapture {
       this.hoverPath = newPath;
     }
 
-    if (!this.isProdMode)
-      console.log("Hover state captured for:", this.hoverPath);
+    // if (!this.isProdMode)
+    console.log("Hover state captured for:", this.hoverPath);
   }
 
   private shouldExcludeElement(element: HTMLElement): boolean {
@@ -204,6 +206,8 @@ class HoverCapture {
   }
 
   private simulateHover(element: HTMLElement, rect: DOMRect): void {
+    console.log("element: ", element);
+
     if (!element) {
       if (!this.isProdMode) console.error("Element not found");
       return;
@@ -272,6 +276,10 @@ class HoverCapture {
     }
 
     this.siteSpecifics.handleRingsMenu(element);
+    this.siteSpecifics.handleKnockaroundMenu(element);
+
+    console.log(element);
+
     if (!this.isProdMode) console.log("Simulated hover for:", element);
   }
 
@@ -297,7 +305,9 @@ class HoverCapture {
             });
             console.log("Cleared hover state for:", item.element);
           }, index * 10);
+
           this.siteSpecifics.handleRingsMenuClear(item.element);
+          this.siteSpecifics.handleKnockaroundMenuClear(item.element);
         });
       this.hoverPath = [];
     } else {
