@@ -237,9 +237,9 @@ class HoverCapture {
 
     // Simulate click for details elements
     if (
-      this.getThis("idSite") === "2761" ||
+      this.getIdSite() === "2761" ||
       (element.tagName.toLowerCase() === "details" &&
-        +this.getThis("idSite") === 1485)
+        +this.getIdSite() === 1485)
     ) {
       if (!this.isProdMode) console.log("Simulating click on details element");
       const clickEvent = new MouseEvent("click", {
@@ -350,12 +350,13 @@ class HoverCapture {
     document.dispatchEvent(new CustomEvent("close-menu"));
   }
 
-  private getThis(item: string) {
-    const parsedUrl = new URL(window.location.href);
-    const searchParams = new URLSearchParams(parsedUrl.search);
-    const hashParams = new URLSearchParams(parsedUrl.hash.slice(1));
+  private getIdSite(): string {
+    const url = window.location.href;
 
-    return searchParams.get(item) || hashParams.get(item) || 0;
+    const regex = /\/heatmaps\/([^\/]+)/;
+    const match = url.match(regex);
+
+    return match[1];
   }
 
   private getRedirectType(): "dashboard" | "locala" | "deves" | "dever" {
