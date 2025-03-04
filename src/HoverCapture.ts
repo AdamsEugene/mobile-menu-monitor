@@ -239,7 +239,7 @@ class HoverCapture {
     if (
       this.getIdSite() === "2761" ||
       (element.tagName.toLowerCase() === "details" &&
-        +this.getIdSite() === 1485)
+        (+this.getIdSite() === 1485 || +this.getIdSite() === 3103))
     ) {
       if (!this.isProdMode) console.log("Simulating click on details element");
       const clickEvent = new MouseEvent("click", {
@@ -265,7 +265,12 @@ class HoverCapture {
       if (!(element as HTMLDetailsElement).open) {
         element.setAttribute("open", ""); // Prevent closing
         element.classList.add("is-open");
-        count > 1 && element.removeEventListener("toggle", handleToggle);
+
+        if (+this.getIdSite() === 3103) {
+          count > 5 && element.removeEventListener("toggle", handleToggle);
+        } else {
+          count > 1 && element.removeEventListener("toggle", handleToggle);
+        }
       }
     }
     if (element.tagName.toLowerCase() === "details") {
@@ -278,7 +283,7 @@ class HoverCapture {
     this.siteSpecifics.handleRingsMenu(element);
     this.siteSpecifics.handleKnockaroundMenu(element);
 
-    console.log(element);
+    if (!this.isProdMode) console.log(element);
 
     if (!this.isProdMode) console.log("Simulated hover for:", element);
   }
@@ -303,7 +308,8 @@ class HoverCapture {
               });
               item.element.dispatchEvent(event);
             });
-            console.log("Cleared hover state for:", item.element);
+            if (!this.isProdMode)
+              console.log("Cleared hover state for:", item.element);
           }, index * 10);
 
           this.siteSpecifics.handleRingsMenuClear(item.element);
@@ -351,12 +357,25 @@ class HoverCapture {
   }
 
   private getIdSite(): string {
-    const url = window.location.href;
+    try {
+      const url = window.location.href;
 
-    const regex = /\/heatmaps\/([^\/]+)/;
-    const match = url.match(regex);
+      // Define regex to match ID after /heatmaps/
+      const regex = /\/heatmaps\/([^\/]+)/;
+      const match = url.match(regex);
 
-    return match[1];
+      // Check if match exists and has capturing group result
+      if (match && match[1]) {
+        return match[1];
+      }
+
+      // Return empty string if no match found
+      return "";
+    } catch (error) {
+      // Log error for debugging but don't throw to caller
+      console.error("Error extracting site ID from URL:", error);
+      return "";
+    }
   }
 
   private getRedirectType(): "dashboard" | "locala" | "deves" | "dever" {
@@ -366,6 +385,7 @@ class HoverCapture {
     if (hostname.includes("dashboard")) return "dashboard";
     if (hostname.includes("early-release")) return "dever";
     if (hostname.includes("earlystage")) return "deves";
+    if (hostname.includes("portal")) return "dashboard";
     return "dashboard";
   }
 }
